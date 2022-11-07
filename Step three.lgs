@@ -1,0 +1,31 @@
+//LG6.0//
+version = 6.0
+infile 'C:\Users\FCl1810.45239\Desktop\Tilburg PhD\Projects\3rd paper\LanzaData\finalMMLanza.sav'
+
+
+model
+title finalStep3Lanza;
+options
+   maxthreads=all;
+   algorithm 
+      tolerance=1e-008 emtolerance=0.01 emiterations=250 nriterations=50 ;
+   startvalues
+      seed=0 sets=16 tolerance=1e-005 iterations=50;
+   bayes
+      categorical=1 variances=1 latent=1 poisson=1;
+   montecarlo
+      seed=0 sets=0 replicates=500 tolerance=1e-008;
+   quadrature  nodes=10;
+   missing  includeall;
+   step3 modal ml;
+   output      
+      parameters=first  betaopts=wl standarderrors=robust profile=posterior
+      probmeans=posterior estimatedvalues=model reorderclasses marginaleffects;
+variables
+   imputationid imp;
+   samplingweight IPW rescale ipw;
+   independent college_enroll nominal;
+   latent Cluster nominal posterior = ( Cluster#1 Cluster#2 ) dif=college_enroll;
+equations
+   Cluster <- 1 + college_enroll;
+end model

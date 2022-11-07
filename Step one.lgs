@@ -1,0 +1,42 @@
+//LG6.0//
+version = 6.0
+infile 'C:\Users\FCl1810.45239\Desktop\Tilburg PhD\Projects\3rd paper\LanzaData\LanzaImputed_v2.sav'
+
+
+model
+title finalMMLanza;
+options
+   maxthreads=all;
+   algorithm 
+      tolerance=1e-008 emtolerance=0.01 emiterations=250 nriterations=50 ;
+   startvalues
+      seed=0 sets=16 tolerance=1e-005 iterations=50;
+   bayes
+      categorical=1 variances=1 latent=1 poisson=1;
+   montecarlo
+      seed=0 sets=0 replicates=500 tolerance=1e-008;
+   quadrature  nodes=10;
+   missing  includeall;
+   output      
+      parameters=effect  betaopts=wl standarderrors profile probmeans=posterior
+      loadings bivariateresiduals estimatedvalues=model reorderclasses marchi2 ;
+   outfile  'C:\Users\FCl1810.45239\Desktop\Tilburg PhD\Projects\3rd paper\LanzaData\finalMMLanza.sav'
+      classification=posterior      keep id, Age, Gender, Race_ethnicity, Household_income,
+         Number_Sib, Language_home, Maternal_education, Education_aspiration_1,
+         Education_aspiration_2, Parent_figure, Metropolitan_status, College_Prep,
+         Cigarette, Cocaine, Crack, PS, IPW;
+variables
+   imputationid imp;
+   dependent Alcohol nominal, CigaretteDummy nominal, Marijuana nominal,
+      CrackCocaine nominal;
+   independent college_enroll nominal;
+   latent
+      Cluster nominal 2;
+equations
+   Cluster <- 1 + college_enroll;
+   Alcohol <- 1 + Cluster + college_enroll;
+   CigaretteDummy <- 1 + Cluster + college_enroll;
+   Marijuana <- 1 + Cluster;
+   CrackCocaine <- 1 + Cluster;
+   Marijuana <-> CrackCocaine;
+end model
